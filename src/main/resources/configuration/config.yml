@@ -1,0 +1,10 @@
+bind:
+  host: 0.0.0.0
+  port: 25565
+
+max-players: 100
+
+motd:
+  version: 'UltraLimbo'
+  description: '<red>Ultra<yellow>Limbo'
+  protocol: -1
