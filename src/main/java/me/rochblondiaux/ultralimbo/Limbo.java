@@ -4,44 +4,86 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.ultralimbo.configuration.YmlConfiguration;
 import me.rochblondiaux.ultralimbo.configuration.implementation.ServerConfiguration;
+import me.rochblondiaux.ultralimbo.console.LimboConsole;
+import net.minecrell.terminalconsole.TerminalConsoleAppender;
 
 @Getter
-@Log4j2
 public class Limbo {
 
     private final Path dataFolder;
+    private final Logger logger;
 
     // Configuration
     private ServerConfiguration configuration;
 
+    private LimboConsole console;
+
     // State
     private final AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicBoolean stopped = new AtomicBoolean(false);
 
     public Limbo() {
         this.dataFolder = Paths.get("").toAbsolutePath();
+        this.logger = LogManager.getLogger("UltraLimbo");
 
         // Start the app
         this.start();
     }
 
     public void start() {
-        log.info("Starting UltraLimbo...");
+        this.logger.info("Starting UltraLimbo...");
+        long start = System.currentTimeMillis();
 
         // Load the configuration
-        log.info("Loading configuration...");
+        this.logger.info("Loading configuration...");
         try {
             YmlConfiguration configuration = new YmlConfiguration(this.dataFolder.resolve("config.yml"), "configuration/config.yml");
             configuration.load();
             this.configuration = configuration.get(ServerConfiguration.class);
         } catch (Exception e) {
-            log.error("An error occurred while loading the configuration", e);
+            this.logger.error("An error occurred while loading the configuration", e);
             System.exit(1);
             return;
         }
-        log.info("Configuration loaded");
+        this.logger.info("Configuration loaded");
+
+        // Shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop, "Shutdown Thread"));
+
+        // Console
+        this.console = new LimboConsole(this);
+
+        this.logger.info("UltraLimbo started in {}ms", System.currentTimeMillis() - start);
+
+        // Start console
+        this.console.start();
+    }
+
+    public void halt() {
+        this.stopped.set(true);
+        this.stop();
+    }
+
+    public void stop() {
+        this.logger.info("Stopping UltraLimbo...");
+        long start = System.currentTimeMillis();
+
+        // TODO: Stop the app
+
+        this.logger.info("UltraLimbo stopped in {}ms", System.currentTimeMillis() - start);
+    }
+
+    public boolean isRunning() {
+        return this.running.get();
+    }
+
+    public boolean isStopped() {
+        return this.stopped.get();
     }
 }
