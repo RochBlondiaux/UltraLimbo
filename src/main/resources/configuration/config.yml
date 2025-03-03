@@ -8,3 +8,7 @@ motd:
   version: 'UltraLimbo'
   description: '<red>Ultra<yellow>Limbo'
   protocol: -1
+
+messages:
+  stopping-server: "<red>Stopping the server..."
+  unknown-command: "<red>No command found with name <command>. Type <b>/help</b> for a list of commands."

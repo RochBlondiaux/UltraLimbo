@@ -1,16 +1,23 @@
 package me.rochblondiaux.ultralimbo.console;
 
+import org.jetbrains.annotations.NotNull;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 
 import lombok.RequiredArgsConstructor;
 import me.rochblondiaux.ultralimbo.Limbo;
+import me.rochblondiaux.ultralimbo.command.CommandSender;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer;
+import net.kyori.ansi.ColorLevel;
 import net.minecrell.terminalconsole.SimpleTerminalConsole;
 
 @RequiredArgsConstructor
-public class LimboConsole extends SimpleTerminalConsole {
+public class LimboConsole extends SimpleTerminalConsole implements CommandSender {
 
     private final Limbo app;
+    private final ANSIComponentSerializer serializer = ANSIComponentSerializer.builder()
+            .build();
 
     @Override
     protected boolean isRunning() {
@@ -19,7 +26,10 @@ public class LimboConsole extends SimpleTerminalConsole {
 
     @Override
     protected void runCommand(String s) {
-        this.app.logger().info("Command: {}", s);
+        if (s == null || s.isBlank())
+            return;
+
+        this.app.commands().handleExecution(this, s);
     }
 
     @Override
@@ -38,4 +48,18 @@ public class LimboConsole extends SimpleTerminalConsole {
     }
 
 
+    @Override
+    public void sendMessage(String message) {
+        this.app.logger().info(message);
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component message) {
+        this.app.logger().info(this.serializer.serialize(message));
+    }
+
+    @Override
+    public String name() {
+        return "console";
+    }
 }

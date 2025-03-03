@@ -8,6 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import lombok.Getter;
+import me.rochblondiaux.ultralimbo.command.CommandManager;
+import me.rochblondiaux.ultralimbo.command.implementation.HelpCommand;
+import me.rochblondiaux.ultralimbo.command.implementation.StopCommand;
 import me.rochblondiaux.ultralimbo.configuration.YmlConfiguration;
 import me.rochblondiaux.ultralimbo.configuration.implementation.ServerConfiguration;
 import me.rochblondiaux.ultralimbo.console.LimboConsole;
@@ -22,6 +25,7 @@ public class Limbo {
     // Configuration
     private ServerConfiguration configuration;
 
+    private CommandManager commands;
     private LimboConsole console;
 
     // State
@@ -55,6 +59,11 @@ public class Limbo {
 
         // Shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop, "Shutdown Thread"));
+
+        // Commands
+        this.commands = new CommandManager(this);
+        this.commands.register(new StopCommand(this));
+        this.commands.register(new HelpCommand(this));
 
         // Console
         this.console = new LimboConsole(this);
