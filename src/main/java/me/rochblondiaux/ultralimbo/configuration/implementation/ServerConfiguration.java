@@ -12,11 +12,20 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @ConfigSerializable
-public record ServerConfiguration(@Setting("bind") SocketAddress address, int maxPlayers, Motd motd, Map<String, String> messages) {
+public record ServerConfiguration(@Setting("bind") SocketAddress address, int maxPlayers, Motd motd, Advanced advanced, Map<String, String> messages) {
 
     @ConfigSerializable
     public record Motd(String version, Component description, int protocol) {
     }
+
+    @ConfigSerializable
+    public record Advanced(String brandName, Netty netty, long readTimeout, Traffic traffic) {}
+
+    @ConfigSerializable
+    public record Traffic(boolean enabled, int maxPacketSize, double maxPacketRate, double interval){}
+
+    @ConfigSerializable
+    public record Netty(int bossGroupSize, int workerGroupSize, boolean useEpoll) {}
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 

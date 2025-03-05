@@ -21,6 +21,7 @@
         <configurate.version>4.1.2</configurate.version>
         <adventure.version>4.17.0</adventure.version>
         <jline.version>3.27.1</jline.version>
+        <netty.version>4.1.119.Final</netty.version>
     </properties>
 
     <!-- dependencies -->
@@ -86,6 +87,12 @@
             <artifactId>adventure-text-serializer-ansi</artifactId>
             <version>${adventure.version}</version>
         </dependency>
+        <!-- adventure/gson -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-gson</artifactId>
+            <version>${adventure.version}</version>
+        </dependency>
         <!-- jline -->
         <dependency>
             <groupId>org.jline</groupId>
@@ -104,8 +111,12 @@
             <artifactId>terminalconsoleappender</artifactId>
             <version>1.3.0</version>
         </dependency>
-
-
+        <!-- netty -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
     </dependencies>
 
     <!-- build -->

@@ -9,6 +9,19 @@ motd:
   description: '<red>Ultra<yellow>Limbo'
   protocol: -1
 
+advanced:
+  brand-name: "UltraLimbo"
+  read-timeout: 30000
+  netty:
+    use-epoll: true
+    boss-group-threads: 1
+    worker-group-threads: 4ne
+  traffic:
+    enabled: true
+    max-packet-size: 8192
+    max-packet-rate: 500
+    interval: 7.0
+
 messages:
   stopping-server: "<red>Stopping the server..."
   unknown-command: "<red>No command found with name <command>. Type <b>/help</b> for a list of commands."

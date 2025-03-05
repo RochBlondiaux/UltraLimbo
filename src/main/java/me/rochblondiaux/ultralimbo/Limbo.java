@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import io.netty.util.ResourceLeakDetector;
 import lombok.Getter;
 import me.rochblondiaux.ultralimbo.command.CommandManager;
 import me.rochblondiaux.ultralimbo.command.implementation.HelpCommand;
@@ -14,7 +15,8 @@ import me.rochblondiaux.ultralimbo.command.implementation.StopCommand;
 import me.rochblondiaux.ultralimbo.configuration.YmlConfiguration;
 import me.rochblondiaux.ultralimbo.configuration.implementation.ServerConfiguration;
 import me.rochblondiaux.ultralimbo.console.LimboConsole;
-import net.minecrell.terminalconsole.TerminalConsoleAppender;
+import me.rochblondiaux.ultralimbo.network.NetworkManager;
+import me.rochblondiaux.ultralimbo.network.connection.ConnectionManager;
 
 @Getter
 public class Limbo {
@@ -25,8 +27,16 @@ public class Limbo {
     // Configuration
     private ServerConfiguration configuration;
 
+    // Console & commands
     private CommandManager commands;
     private LimboConsole console;
+
+    // Managers
+    private ConnectionManager connections;
+    private NetworkManager networkManager;
+
+    // Server
+    private LimboServer server;
 
     // State
     private final AtomicBoolean running = new AtomicBoolean(true);
@@ -44,6 +54,8 @@ public class Limbo {
         this.logger.info("Starting UltraLimbo...");
         long start = System.currentTimeMillis();
 
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED);
+
         // Load the configuration
         this.logger.info("Loading configuration...");
         try {
@@ -60,6 +72,10 @@ public class Limbo {
         // Shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop, "Shutdown Thread"));
 
+        // Connections
+        this.connections = new ConnectionManager();
+        this.networkManager = new NetworkManager(this);
+
         // Commands
         this.commands = new CommandManager(this);
         this.commands.register(new StopCommand(this));
@@ -67,6 +83,10 @@ public class Limbo {
 
         // Console
         this.console = new LimboConsole(this);
+
+        // Server
+        this.server = new LimboServer(this);
+        this.server.start();
 
         this.logger.info("UltraLimbo started in {}ms", System.currentTimeMillis() - start);
 
@@ -83,7 +103,8 @@ public class Limbo {
         this.logger.info("Stopping UltraLimbo...");
         long start = System.currentTimeMillis();
 
-        // TODO: Stop the app
+        // Server
+        this.server.stop();
 
         this.logger.info("UltraLimbo stopped in {}ms", System.currentTimeMillis() - start);
     }
