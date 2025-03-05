@@ -12,6 +12,8 @@ import io.netty.util.ResourceLeakDetector;
 import lombok.Getter;
 import me.rochblondiaux.ultralimbo.command.CommandManager;
 import me.rochblondiaux.ultralimbo.command.implementation.HelpCommand;
+import me.rochblondiaux.ultralimbo.command.implementation.ListCommand;
+import me.rochblondiaux.ultralimbo.command.implementation.MemoryCommand;
 import me.rochblondiaux.ultralimbo.command.implementation.StopCommand;
 import me.rochblondiaux.ultralimbo.configuration.YmlConfiguration;
 import me.rochblondiaux.ultralimbo.configuration.implementation.ServerConfiguration;
@@ -97,6 +99,8 @@ public class Limbo {
         this.commands = new CommandManager(this);
         this.commands.register(new StopCommand(this));
         this.commands.register(new HelpCommand(this));
+        this.commands.register(new ListCommand(this));
+        this.commands.register(new MemoryCommand());
 
         // Console
         this.console = new LimboConsole(this);
@@ -108,6 +112,7 @@ public class Limbo {
         // Packet snapshots
         PacketSnapshots.initPackets(this);
 
+        System.gc();
         this.logger.info("UltraLimbo started in {}ms", System.currentTimeMillis() - start);
 
         // Start console

@@ -18,6 +18,7 @@ import me.rochblondiaux.ultralimbo.network.protocol.packets.login.LoginAcknowled
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginDisconnect;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginSuccess;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.ServerboundLoginStart;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.KeepAlivePacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.StatusPingPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.client.ClientboundStatusResponse;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.server.ServerboundStatusRequest;
@@ -57,6 +58,8 @@ public class NetworkManager {
             handleLoginAcknowledge(connection);
         else if (packet instanceof FinishConfigurationPacket)
             app.playerManager().register(connection);
+        else if (packet instanceof KeepAlivePacket keepAlivePacket)
+            connection.handleKeepAlive(keepAlivePacket.id());
     }
 
     private void handleLoginStart(ClientConnection connection, ServerboundLoginStart packet) {

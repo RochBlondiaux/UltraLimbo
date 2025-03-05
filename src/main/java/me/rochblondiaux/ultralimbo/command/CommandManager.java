@@ -41,16 +41,14 @@ public class CommandManager {
     }
 
     public void handleExecution(CommandSender executor, String raw) {
-        this.findByNameOrAlias(raw)
-                .ifPresentOrElse(command -> {
-                    String[] args = raw.split(" ");
-                    String commandName = args[0].toLowerCase();
+        String[] args = raw.split(" ");
+        String commandName = args[0].toLowerCase();
 
-                    String[] arguments = new String[args.length - 1];
-                    System.arraycopy(args, 1, arguments, 0, arguments.length);
+        String[] arguments = new String[args.length - 1];
+        System.arraycopy(args, 1, arguments, 0, arguments.length);
 
-                    command.execute(executor, commandName, arguments);
-                }, () -> this.app.configuration().message(executor, "unknown-command", Placeholder.parsed("command", raw)));
+        this.findByNameOrAlias(commandName)
+                .ifPresentOrElse(command -> command.execute(executor, commandName, arguments), () -> this.app.configuration().message(executor, "unknown-command", Placeholder.parsed("command", raw)));
     }
 
 }

@@ -1,5 +1,8 @@
 package me.rochblondiaux.ultralimbo;
 
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -13,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.ultralimbo.configuration.implementation.ServerConfiguration;
 import me.rochblondiaux.ultralimbo.network.connection.ClientChannelInitializer;
+import me.rochblondiaux.ultralimbo.network.connection.ClientConnection;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class LimboServer {
     private final Limbo app;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
+    private ScheduledFuture<?> keepAliveTask;
 
     public void start() {
         Class<? extends ServerChannel> channelClass;
@@ -38,7 +43,6 @@ public class LimboServer {
             log.debug("Using Java NIO transport type");
         }
 
-
         new ServerBootstrap()
                 .group(bossGroup, workerGroup)
                 .channel(channelClass)
@@ -47,13 +51,32 @@ public class LimboServer {
                 .localAddress(app.configuration().address())
                 .bind();
 
+        // Keep alive task
+        this.keepAliveTask = workerGroup.scheduleAtFixedRate(this::broadcastKeepAlive, 0, 5L, TimeUnit.SECONDS);
+
         log.info("Server started on {}", app.configuration().address());
     }
 
+    private void broadcastKeepAlive() {
+        for (ClientConnection connection : this.app.connections().connections()) {
+            if (connection.state().ordinal() < 2)
+                continue;
+
+            connection.sendKeepAlive();
+        }
+    }
+
     public void stop() {
+        log.info("Stopping server...");
+        long start = System.currentTimeMillis();
+
+        if (keepAliveTask != null)
+            keepAliveTask.cancel(true);
         if (bossGroup != null)
             bossGroup.shutdownGracefully();
         if (workerGroup != null)
             workerGroup.shutdownGracefully();
+
+        log.info("Server stopped in {}ms.", System.currentTimeMillis() - start);
     }
 }

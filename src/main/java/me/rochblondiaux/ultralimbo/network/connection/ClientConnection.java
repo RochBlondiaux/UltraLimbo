@@ -17,6 +17,7 @@ import me.rochblondiaux.ultralimbo.network.connection.pipeline.PacketDecoder;
 import me.rochblondiaux.ultralimbo.network.connection.pipeline.PacketEncoder;
 import me.rochblondiaux.ultralimbo.network.protocol.ClientboundPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.ServerboundPacket;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.KeepAlivePacket;
 import me.rochblondiaux.ultralimbo.network.protocol.registry.State;
 import me.rochblondiaux.ultralimbo.network.protocol.registry.Version;
 
@@ -38,6 +39,9 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
     private SocketAddress address;
 
     private int velocityLoginMessageId = -1;
+    private long lastKeepAlive;
+    private long lastKeepAliveSent;
+    private long latency;
 
     public ClientConnection(Channel channel, Limbo app, PacketDecoder decoder, PacketEncoder encoder) {
         this.app = app;
@@ -45,7 +49,7 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
         this.decoder = decoder;
         this.encoder = encoder;
         this.address = channel.remoteAddress();
-
+        this.lastKeepAlive = System.currentTimeMillis();
     }
 
     @Override
@@ -67,6 +71,19 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
             return;
 
         this.app.networkManager().handleIncoming(this, packet);
+    }
+
+    public void sendKeepAlive() {
+        this.lastKeepAliveSent = System.currentTimeMillis();
+        this.sendPacket(new KeepAlivePacket(this.lastKeepAliveSent));
+    }
+
+    public void handleKeepAlive(long id) {
+        if (id != this.lastKeepAliveSent)
+            return;
+
+        this.latency = System.currentTimeMillis() - this.lastKeepAliveSent;
+        this.lastKeepAlive = System.currentTimeMillis();
     }
 
     public void sendPacket(ClientboundPacket packet) {
