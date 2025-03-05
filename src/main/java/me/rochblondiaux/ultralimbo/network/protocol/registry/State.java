@@ -253,7 +253,18 @@ public enum State {
                     map(0x27, V1_20_5, V1_21),
                     map(0x28, V1_21_2, V1_21_4)
             );
-
+            clientBound.register(ClientboundCloseContainer::new,
+                    map(0x13, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundBossBar::new,
+                    map(0x0C, V1_9, V1_14_4),
+                    map(0x0D, V1_15, V1_15_2),
+                    map(0x0C, V1_16, V1_16_4),
+                    map(0x0D, V1_17, V1_18_2),
+                    map(0x0A, V1_19, V1_19_3),
+                    map(0x0B, V1_19_4, V1_20),
+                    map(0x0A, V1_20_2, V1_21_4)
+            );
             serverBound.register(ServerboundChatCommand::new,
                     map(0x05, V1_21_2, V1_21_4)
             );

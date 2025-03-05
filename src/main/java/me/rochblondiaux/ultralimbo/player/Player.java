@@ -1,5 +1,8 @@
 package me.rochblondiaux.ultralimbo.player;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -8,7 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
 import me.rochblondiaux.ultralimbo.command.CommandSender;
 import me.rochblondiaux.ultralimbo.network.connection.ClientConnection;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundBossBar;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundChatMessage;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundCloseContainer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -23,6 +28,8 @@ public class Player implements Audience, CommandSender {
     private final ClientConnection connection;
     private final AtomicInteger entityIdCounter;
     private GameMode gameMode;
+    private int openInventoryId;
+    private final Map<UUID, BossBar> bossBars = new HashMap<>();
 
     public Player(ClientConnection connection) {
         this.entityId = 0;
@@ -31,8 +38,15 @@ public class Player implements Audience, CommandSender {
         this.connection = connection;
         this.entityIdCounter = new AtomicInteger(1);
         this.gameMode = GameMode.SURVIVAL;
+        this.openInventoryId = -1;
     }
 
+    public void closeInventory() {
+        if (openInventoryId < 0)
+            return;
+
+        this.connection.sendPacket(new ClientboundCloseContainer(openInventoryId));
+    }
 
     @Override
     public void sendMessage(String message) {
@@ -89,12 +103,19 @@ public class Player implements Audience, CommandSender {
 
     @Override
     public void showBossBar(@NotNull BossBar bar) {
-        // TODO: implement
+        UUID uniqueId = UUID.randomUUID();
+        this.bossBars.put(uniqueId, bar);
+
+        this.connection.sendPacket(new ClientboundBossBar(uniqueId, ClientboundBossBar.Action.ADD, bar));
     }
 
     @Override
     public void hideBossBar(@NotNull BossBar bar) {
-        // TODO: implement
+        this.findBossBarUniqueId(bar)
+                .ifPresent(uniqueId -> {
+                    this.bossBars.remove(uniqueId);
+                    this.connection.sendPacket(new ClientboundBossBar(uniqueId, ClientboundBossBar.Action.REMOVE, bar));
+                });
     }
 
     public int currentEntityId() {
@@ -103,5 +124,13 @@ public class Player implements Audience, CommandSender {
 
     public int nextEntityId() {
         return this.entityIdCounter.incrementAndGet();
+    }
+
+    private Optional<UUID> findBossBarUniqueId(BossBar bar) {
+        return this.bossBars.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().equals(bar))
+                .map(Map.Entry::getKey)
+                .findFirst();
     }
 }
