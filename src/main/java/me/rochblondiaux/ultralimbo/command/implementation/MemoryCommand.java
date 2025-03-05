@@ -23,11 +23,11 @@ public class MemoryCommand extends BaseCommand {
         long free = runtime.freeMemory() / mb;
         long max = runtime.maxMemory() / mb;
 
-        executor.sendMessage(Component.text("        ", NamedTextColor.GRAY, TextDecoration.UNDERLINED)
+        executor.sendMessage(Component.text("        ", NamedTextColor.GRAY, TextDecoration.STRIKETHROUGH)
                 .appendSpace()
-                .append(Component.text("Memory usage", NamedTextColor.AQUA))
+                .append(Component.text("Memory usage", NamedTextColor.AQUA).decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.FALSE))
                 .appendSpace()
-                .append(Component.text("        ", NamedTextColor.GRAY, TextDecoration.UNDERLINED)));
+                .append(Component.text("        ", NamedTextColor.GRAY, TextDecoration.STRIKETHROUGH)));
         executor.sendMessage(Component.text("Used: ", NamedTextColor.GRAY)
                 .append(Component.text(used, NamedTextColor.AQUA))
                 .append(Component.text(" MB", NamedTextColor.GRAY)));

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
 import me.rochblondiaux.ultralimbo.command.CommandSender;
 import me.rochblondiaux.ultralimbo.network.connection.ClientConnection;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundChatMessage;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -35,17 +36,25 @@ public class Player implements Audience, CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        // TODO: implement
+        this.sendMessage(Component.text(message));
     }
 
     @Override
     public void sendMessage(@NotNull Component message) {
-        // TODO: implement
+        this.connection.sendPacket(new ClientboundChatMessage(
+                UUID.randomUUID(),
+                ClientboundChatMessage.LegacyPosition.CHAT,
+                message
+        ));
     }
 
     @Override
     public void sendActionBar(@NotNull Component message) {
-        // TODO: implement
+        this.connection.sendPacket(new ClientboundChatMessage(
+                UUID.randomUUID(),
+                ClientboundChatMessage.LegacyPosition.ACTION_BAR,
+                message
+        ));
     }
 
     @Override

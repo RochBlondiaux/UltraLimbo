@@ -19,6 +19,7 @@ import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.Clientb
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginSuccess;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.ServerboundLoginStart;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.KeepAlivePacket;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.server.ServerboundChatCommand;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.StatusPingPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.client.ClientboundStatusResponse;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.server.ServerboundStatusRequest;
@@ -49,7 +50,7 @@ public class NetworkManager {
                     Version.getMax().protocolNumber(),
                     configuration.motd().version(),
                     configuration.motd().description(),
-                    this.app.connections().size(),
+                    this.app.playerManager().count(),
                     configuration.maxPlayers()
             ));
         } else if (packet instanceof ServerboundLoginStart loginStartPacket)
@@ -60,6 +61,13 @@ public class NetworkManager {
             app.playerManager().register(connection);
         else if (packet instanceof KeepAlivePacket keepAlivePacket)
             connection.handleKeepAlive(keepAlivePacket.id());
+        else if (packet instanceof ServerboundChatCommand chatCommandPacket)
+            app.playerManager().findByUniqueId(connection.uniqueId())
+                            .ifPresent(player -> {
+                                String command = chatCommandPacket.command();
+                                log.info("Player {} executed command: {}", player.name(), command);
+                                app.commands().handleExecution(player, command);
+                            });
     }
 
     private void handleLoginStart(ClientConnection connection, ServerboundLoginStart packet) {

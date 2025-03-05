@@ -18,6 +18,7 @@ import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.Serverb
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.ServerboundLoginStart;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.KeepAlivePacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.*;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.server.ServerboundChatCommand;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.StatusPingPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.client.ClientboundStatusResponse;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.server.ServerboundStatusRequest;
@@ -218,6 +219,22 @@ public enum State {
                     map(0x26, V1_20_5, V1_21),
                     map(0x27, V1_21_2, V1_21_4)
             );
+            clientBound.register(ClientboundChatMessage::new,
+                    map(0x02, V1_7_2, V1_8),
+                    map(0x0F, V1_9, V1_12_2),
+                    map(0x0E, V1_13, V1_14_4),
+                    map(0x0F, V1_15, V1_15_2),
+                    map(0x0E, V1_16, V1_16_4),
+                    map(0x0F, V1_17, V1_18_2),
+                    map(0x5F, V1_19, V1_19),
+                    map(0x62, V1_19_1, V1_19_1),
+                    map(0x60, V1_19_3, V1_19_3),
+                    map(0x64, V1_19_4, V1_20),
+                    map(0x67, V1_20_2, V1_20_2),
+                    map(0x69, V1_20_3, V1_20_3),
+                    map(0x6C, V1_20_5, V1_21),
+                    map(0x73, V1_21_2, V1_21_4)
+            );
             clientBound.register(ClientboundSpawnPosition::new,
                     map(0x4C, V1_19_3, V1_19_3),
                     map(0x50, V1_19_4, V1_20),
@@ -235,6 +252,10 @@ public enum State {
                     map(0x25, V1_20_3, V1_20_3),
                     map(0x27, V1_20_5, V1_21),
                     map(0x28, V1_21_2, V1_21_4)
+            );
+
+            serverBound.register(ServerboundChatCommand::new,
+                    map(0x05, V1_21_2, V1_21_4)
             );
         }
     };

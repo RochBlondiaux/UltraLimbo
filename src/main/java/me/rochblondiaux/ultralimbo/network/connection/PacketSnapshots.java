@@ -48,7 +48,7 @@ public class PacketSnapshots {
         PACKET_PLAYER_ABILITIES = PacketSnapshot.of(playerAbilitiesPacket);
 
         // Declare commands
-        ClientboundDeclareCommands declareCommandsPacket = new ClientboundDeclareCommands(new ArrayList<>());
+        ClientboundDeclareCommands declareCommandsPacket = new ClientboundDeclareCommands(new ArrayList<>(app.commands().commands().keySet()));
         PACKET_DECLARE_COMMANDS = PacketSnapshot.of(declareCommandsPacket);
 
         // Wait for chunks

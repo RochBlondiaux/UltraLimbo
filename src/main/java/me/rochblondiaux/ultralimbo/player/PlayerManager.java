@@ -75,7 +75,6 @@ public class PlayerManager {
         } else {
             sendPlayPackets.run();
         }
-
     }
 
     public void unregister(UUID uniqueId) {
