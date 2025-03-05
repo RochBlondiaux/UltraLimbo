@@ -9,6 +9,8 @@ motd:
   description: '<red>Ultra<yellow>Limbo'
   protocol: -1
 
+dimension: THE_END
+
 advanced:
   brand-name: "UltraLimbo"
   read-timeout: 30000
@@ -25,3 +27,5 @@ advanced:
 messages:
   stopping-server: "<red>Stopping the server..."
   unknown-command: "<red>No command found with name <command>. Type <b>/help</b> for a list of commands."
+  server-full: "<red>The server is full!"
+  unsupported-version: "<red>Unsupported version!"

@@ -5,11 +5,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jetbrains.annotations.Unmodifiable;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import me.rochblondiaux.ultralimbo.Limbo;
 
 @Log4j2
+@RequiredArgsConstructor
 public class ConnectionManager {
 
+    private final Limbo app;
     private final List<ClientConnection> connections = new CopyOnWriteArrayList<>();
 
     public void add(ClientConnection connection) {
@@ -20,6 +24,8 @@ public class ConnectionManager {
     public void remove(ClientConnection connection) {
         this.connections.remove(connection);
         log.debug("Removed connection {}", connection.uniqueId());
+
+        this.app.playerManager().unregister(connection.uniqueId());
     }
 
     public int size() {

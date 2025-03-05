@@ -12,7 +12,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @ConfigSerializable
-public record ServerConfiguration(@Setting("bind") SocketAddress address, int maxPlayers, Motd motd, Advanced advanced, Map<String, String> messages) {
+public record ServerConfiguration(@Setting("bind") SocketAddress address, int maxPlayers, Motd motd, Advanced advanced, Map<String, String> messages, String dimension) {
 
     @ConfigSerializable
     public record Motd(String version, Component description, int protocol) {

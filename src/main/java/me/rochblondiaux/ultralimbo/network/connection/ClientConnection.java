@@ -104,6 +104,11 @@ public class ClientConnection extends ChannelInboundHandlerAdapter {
         encoder.updateVersion(version);
     }
 
+    public void updateProfile(UUID uniqueId, String username) {
+        this.uniqueId = uniqueId;
+        this.username = username;
+    }
+
     public void setAddress(String host) {
         this.address = new InetSocketAddress(host, ((InetSocketAddress) this.address).getPort());
     }

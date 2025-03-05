@@ -1,5 +1,6 @@
 package me.rochblondiaux.ultralimbo;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,6 +18,9 @@ import me.rochblondiaux.ultralimbo.configuration.implementation.ServerConfigurat
 import me.rochblondiaux.ultralimbo.console.LimboConsole;
 import me.rochblondiaux.ultralimbo.network.NetworkManager;
 import me.rochblondiaux.ultralimbo.network.connection.ConnectionManager;
+import me.rochblondiaux.ultralimbo.network.connection.PacketSnapshots;
+import me.rochblondiaux.ultralimbo.player.PlayerManager;
+import me.rochblondiaux.ultralimbo.world.DimensionRegistry;
 
 @Getter
 public class Limbo {
@@ -31,7 +35,11 @@ public class Limbo {
     private CommandManager commands;
     private LimboConsole console;
 
+    // Registry
+    private DimensionRegistry dimensionRegistry;
+
     // Managers
+    private PlayerManager playerManager;
     private ConnectionManager connections;
     private NetworkManager networkManager;
 
@@ -72,8 +80,17 @@ public class Limbo {
         // Shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::stop, "Shutdown Thread"));
 
+        // Registry
+        this.dimensionRegistry = new DimensionRegistry(this);
+        try {
+            this.dimensionRegistry.load(configuration.dimension());
+        } catch (IOException e) {
+            throw new RuntimeException("An error occurred while loading the dimension registry", e);
+        }
+
         // Connections
-        this.connections = new ConnectionManager();
+        this.playerManager = new PlayerManager(this);
+        this.connections = new ConnectionManager(this);
         this.networkManager = new NetworkManager(this);
 
         // Commands
@@ -87,6 +104,9 @@ public class Limbo {
         // Server
         this.server = new LimboServer(this);
         this.server.start();
+
+        // Packet snapshots
+        PacketSnapshots.initPackets(this);
 
         this.logger.info("UltraLimbo started in {}ms", System.currentTimeMillis() - start);
 

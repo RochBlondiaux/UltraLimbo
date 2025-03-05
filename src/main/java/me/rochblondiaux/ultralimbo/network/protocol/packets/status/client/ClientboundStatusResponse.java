@@ -29,7 +29,6 @@ public class ClientboundStatusResponse implements ClientboundPacket {
     @Override
     public void encode(ByteMessage msg, Version version) {
         String motd = CACHED_RESPONSE == null ? CACHED_RESPONSE = buildMotd() : CACHED_RESPONSE;
-        System.out.println("motd: " + motd);
         msg.writeString(motd);
     }
 
@@ -47,8 +46,6 @@ public class ClientboundStatusResponse implements ClientboundPacket {
         jsonObject.add("players", playersObject);
 
         jsonObject.addProperty("description", "%MOTD%");
-
-        TreeMap<String, Object> treeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         return new Gson().toJson(jsonObject).replace("\"%MOTD%\"", GsonComponentSerializer.gson().serialize(description));
     }
