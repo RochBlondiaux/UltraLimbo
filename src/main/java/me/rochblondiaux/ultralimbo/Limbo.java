@@ -22,6 +22,7 @@ import me.rochblondiaux.ultralimbo.network.NetworkManager;
 import me.rochblondiaux.ultralimbo.network.connection.ConnectionManager;
 import me.rochblondiaux.ultralimbo.network.connection.PacketSnapshots;
 import me.rochblondiaux.ultralimbo.player.PlayerManager;
+import me.rochblondiaux.ultralimbo.registry.Registries;
 import me.rochblondiaux.ultralimbo.world.DimensionRegistry;
 
 @Getter
@@ -111,6 +112,9 @@ public class Limbo {
 
         // Packet snapshots
         PacketSnapshots.initPackets(this);
+
+        // Registries
+        Registries.init();
 
         System.gc();
         this.logger.info("UltraLimbo started in {}ms", System.currentTimeMillis() - start);

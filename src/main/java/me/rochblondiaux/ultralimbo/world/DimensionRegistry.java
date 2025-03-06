@@ -103,7 +103,7 @@ public final class DimensionRegistry {
     }
 
     private CompoundBinaryTag readCodecFile(String resPath) throws IOException {
-        try (InputStream inputStream = app.getClass().getResourceAsStream("/dimensions/%s.snbt".formatted(resPath))) {
+        try (InputStream inputStream = app.getClass().getResourceAsStream("/minecraft/dimensions/%s.snbt".formatted(resPath))) {
             if (inputStream == null)
                 throw new FileNotFoundException("Cannot find codec file");
 

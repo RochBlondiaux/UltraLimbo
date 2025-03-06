@@ -36,6 +36,7 @@ import io.netty.buffer.*;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import io.netty.util.ByteProcessor;
+import me.rochblondiaux.ultralimbo.entity.metadata.EntityData;
 import me.rochblondiaux.ultralimbo.utils.StringUtils;
 import me.rochblondiaux.ultralimbo.utils.nbt.NbtComponentSerializer;
 import net.kyori.adventure.nbt.*;
@@ -134,7 +135,6 @@ public class ByteMessage extends ByteBuf {
     public void writeString(String str, int length) {
         writeString(str, length, true);
     }
-
 
     public void writeString(String s, int maxLen, boolean substr) {
         if (substr) {
@@ -309,6 +309,16 @@ public class ByteMessage extends ByteBuf {
             throw new StackOverflowError("BitSet too large (expected " + size + " got " + bits.size() + ")");
         }
         buf.writeBytes(Arrays.copyOf(bits.toByteArray(), (size + 8) >> 3));
+    }
+
+    public void writeMetadata(List<EntityData> entityData) {
+        for (EntityData data : entityData) {
+            this.writeByte(data.index());
+            this.writeVarInt(data.type().id());
+
+            data.type().dataSerializer().accept(this, data.value());
+        }
+        this.writeByte(255);
     }
 
     /* Delegated methods */

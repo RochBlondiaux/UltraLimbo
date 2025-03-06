@@ -88,7 +88,8 @@ public class Player implements Audience, CommandSender {
 
     @Override
     public void clearTitle() {
-        // TODO: implement
+        this.connection.sendPacket(new ClientboundTitleSetTitle(Component.empty()));
+        this.connection.sendPacket(new ClientboundTitleSetSubTitle(Component.empty()));
     }
 
     @Override

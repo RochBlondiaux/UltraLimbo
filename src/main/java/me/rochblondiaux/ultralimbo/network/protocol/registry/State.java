@@ -6,13 +6,13 @@ import java.util.function.Supplier;
 import lombok.Getter;
 import me.rochblondiaux.ultralimbo.network.protocol.Packet;
 import me.rochblondiaux.ultralimbo.network.protocol.ServerboundPacket;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.ClientboundDisconnect;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.ServerboundHandshake;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.FinishConfigurationPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.client.ClientboundRegistryData;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.client.ClientboundTransfer;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.server.ServerboundClientInformation;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.LoginAcknowledgedPacket;
-import me.rochblondiaux.ultralimbo.network.protocol.packets.ClientboundDisconnect;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginPluginRequest;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginSuccess;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.ServerboundLoginPluginResponse;
@@ -20,6 +20,7 @@ import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.Serverb
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.KeepAlivePacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.*;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.server.ServerboundChatCommand;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.server.ServerboundEntityInteraction;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.StatusPingPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.client.ClientboundStatusResponse;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.status.server.ServerboundStatusRequest;
@@ -346,11 +347,26 @@ public enum State {
                     map(0x3E, V1_20_5, V1_21),
                     map(0x40, V1_21_2, V1_21_4)
             );
+            clientBound.register(ClientboundSpawnEntity::new,
+                    map(0x01, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundEntityMetadata::new,
+                    map(0x5D, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundTeleportEntity::new,
+                    map(0x20, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundDestroyEntities::new,
+                    map(0x47, V1_21_2, V1_21_4)
+            );
             clientBound.register(ClientboundRemovePlayerInfo::new,
                     map(0x3F, V1_21_2, V1_21_4)
             );
             serverBound.register(ServerboundChatCommand::new,
                     map(0x05, V1_21_2, V1_21_4)
+            );
+            serverBound.register(ServerboundEntityInteraction::new,
+                    map(0x18, V1_21_2, V1_21_4)
             );
         }
     };

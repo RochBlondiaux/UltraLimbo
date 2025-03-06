@@ -12,15 +12,18 @@ import org.jetbrains.annotations.Unmodifiable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import me.rochblondiaux.ultralimbo.Limbo;
+import me.rochblondiaux.ultralimbo.entity.EntityType;
 import me.rochblondiaux.ultralimbo.network.connection.ClientConnection;
 import me.rochblondiaux.ultralimbo.network.connection.PacketSnapshots;
 import me.rochblondiaux.ultralimbo.network.protocol.PacketSnapshot;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.ClientboundDisconnect;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundPlayerPositionAndLook;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundSpawnEntity;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundSpawnPosition;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundUpdatePlayerInfo;
 import me.rochblondiaux.ultralimbo.network.protocol.registry.State;
 import me.rochblondiaux.ultralimbo.network.protocol.registry.Version;
+import me.rochblondiaux.ultralimbo.utils.Location;
 import net.kyori.adventure.text.Component;
 
 @RequiredArgsConstructor
@@ -79,6 +82,15 @@ public class PlayerManager {
                     player.gameMode(),
                     Component.text(player.name())
             )));
+
+            // int id, UUID uniqueId, Location location, EntityType type, float headYaw
+            connection.sendPacket(new ClientboundSpawnEntity(
+                    10,
+                    UUID.randomUUID(),
+                    new Location(2, 400, 0),
+                    EntityType.ARMOR_STAND,
+                    0
+            ));
         };
 
         if (connection.clientVersion().lessOrEqual(Version.V1_7_6)) {
