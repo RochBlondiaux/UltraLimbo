@@ -15,7 +15,7 @@ import me.rochblondiaux.ultralimbo.network.protocol.packets.ServerboundHandshake
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.FinishConfigurationPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.client.ClientboundRegistryData;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.LoginAcknowledgedPacket;
-import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginDisconnect;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.ClientboundDisconnect;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginSuccess;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.ServerboundLoginStart;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.KeepAlivePacket;
@@ -76,13 +76,13 @@ public class NetworkManager {
         // Server full check
         int maxPlayers = this.app.configuration().maxPlayers();
         if (maxPlayers > 0 && this.app.playerManager().count() > maxPlayers) {
-            connection.sendPacketAndClose(new ClientboundLoginDisconnect(this.app.configuration().component("server-full")));
+            connection.sendPacketAndClose(new ClientboundDisconnect(this.app.configuration().component("server-full")));
             return;
         }
 
         // Version check
         if (!connection.clientVersion().isSupported()) {
-            connection.sendPacketAndClose(new ClientboundLoginDisconnect(this.app.configuration().component("unsupported-version")));
+            connection.sendPacketAndClose(new ClientboundDisconnect(this.app.configuration().component("unsupported-version")));
             return;
         }
 

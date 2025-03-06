@@ -1,4 +1,4 @@
-package me.rochblondiaux.ultralimbo.network.protocol.packets.login.client;
+package me.rochblondiaux.ultralimbo.network.protocol.packets.play.client;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -9,12 +9,12 @@ import net.kyori.adventure.text.Component;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientboundLoginDisconnect implements ClientboundPacket {
+public class ClientboundTitleSetTitle implements ClientboundPacket {
 
-    private Component reason;
+    private Component component;
 
     @Override
     public void encode(ByteMessage msg, Version version) {
-        msg.writeComponent(reason);
+        msg.writeComponent(component);
     }
 }

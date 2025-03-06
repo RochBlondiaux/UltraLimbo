@@ -11,9 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
 import me.rochblondiaux.ultralimbo.command.CommandSender;
 import me.rochblondiaux.ultralimbo.network.connection.ClientConnection;
-import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundBossBar;
-import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundChatMessage;
-import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundCloseContainer;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.*;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -73,22 +71,14 @@ public class Player implements Audience, CommandSender {
 
     @Override
     public void sendPlayerListHeaderAndFooter(@NotNull Component header, @NotNull Component footer) {
-        // TODO: implement
+        this.connection.sendPacket(new ClientboundPlayerListHeader(header, footer));
     }
 
     @Override
     public void showTitle(@NotNull Title title) {
-        // TODO: implement
-    }
-
-    @Override
-    public void sendPlayerListFooter(@NotNull Component footer) {
-        // TODO: implement
-    }
-
-    @Override
-    public void sendPlayerListHeader(@NotNull Component header) {
-        // TODO: implement
+        this.connection.sendPacket(new ClientboundTitleSetTitle(title.title()));
+        this.connection.sendPacket(new ClientboundTitleSetSubTitle(title.subtitle()));
+        this.connection.sendPacket(new ClientboundTitleTimes(title.times()));
     }
 
     @Override

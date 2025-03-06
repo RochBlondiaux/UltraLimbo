@@ -52,7 +52,7 @@ public class PacketSnapshots {
         PACKET_DECLARE_COMMANDS = PacketSnapshot.of(declareCommandsPacket);
 
         // Wait for chunks
-        ClientboundGameEvent gameEvent = new ClientboundGameEvent((byte) 13, 0);
+        ClientboundGameEvent gameEvent = new ClientboundGameEvent(ClientboundGameEvent.Type.START_WAITING_FOR_LEVEL_CHUNKS, 0);
         PACKET_START_WAITING_CHUNKS = PacketSnapshot.of(gameEvent);
 
         // Empty chunks

@@ -9,9 +9,10 @@ import me.rochblondiaux.ultralimbo.network.protocol.ServerboundPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.ServerboundHandshake;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.FinishConfigurationPacket;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.client.ClientboundRegistryData;
-import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.server.ServerboundPlayerLoaded;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.client.ClientboundTransfer;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.configuration.server.ServerboundClientInformation;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.LoginAcknowledgedPacket;
-import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginDisconnect;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.ClientboundDisconnect;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginPluginRequest;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.client.ClientboundLoginSuccess;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.login.server.ServerboundLoginPluginResponse;
@@ -60,7 +61,7 @@ public enum State {
                     LoginAcknowledgedPacket::new,
                     map(0x03, V1_20_2, getMax())
             );
-            clientBound.register(ClientboundLoginDisconnect::new,
+            clientBound.register(ClientboundDisconnect::new,
                     map(0x00, getMin(), getMax())
             );
             clientBound.register(ClientboundLoginSuccess::new,
@@ -78,11 +79,11 @@ public enum State {
 //                    map(0x00, V1_20_2, V1_20_3),
 //                    map(0x01, V1_20_5, V1_21_4)
 //            );
-//            clientBound.register(
-//                    PacketDisconnect::new,
-//                    map(0x01, V1_20_2, V1_20_3),
-//                    map(0x02, V1_20_5, V1_21_4)
-//            );
+            clientBound.register(
+                    ClientboundDisconnect::new,
+                    map(0x01, V1_20_2, V1_20_3),
+                    map(0x02, V1_20_5, V1_21_4)
+            );
             clientBound.register(
                     FinishConfigurationPacket::new,
                     map(0x02, V1_20_2, V1_20_3),
@@ -98,8 +99,12 @@ public enum State {
                     map(0x05, V1_20_2, V1_20_3),
                     map(0x07, V1_20_5, V1_21_4)
             );
+            clientBound.register(
+                    ClientboundTransfer::new,
+                    map(0x0B, V1_20_5, V1_21_4)
+            );
 
-            serverBound.register(ServerboundPlayerLoaded::new,
+            serverBound.register(ServerboundClientInformation::new,
                     map(0x00, V1_21_4, V1_21_4)
             );
 //            serverBound.register(
@@ -138,6 +143,10 @@ public enum State {
                     map(0x15, V1_20_3, V1_20_3),
                     map(0x18, V1_20_5, V1_21),
                     map(0x1A, V1_21_2, V1_21_4)
+            );
+            clientBound.register(
+                    ClientboundDisconnect::new,
+                    map(0x01D, V1_20_5, V1_21_4)
             );
             clientBound.register(ClientboundDeclareCommands::new,
                     map(0x11, V1_13, V1_14_4),
@@ -235,6 +244,60 @@ public enum State {
                     map(0x6C, V1_20_5, V1_21),
                     map(0x73, V1_21_2, V1_21_4)
             );
+            clientBound.register(ClientboundTitleSetTitle::new,
+                    map(0x59, V1_17, V1_17_1),
+                    map(0x5A, V1_18, V1_19),
+                    map(0x5D, V1_19_1, V1_19_1),
+                    map(0x5B, V1_19_3, V1_19_3),
+                    map(0x5F, V1_19_4, V1_20),
+                    map(0x61, V1_20_2, V1_20_2),
+                    map(0x63, V1_20_3, V1_20_3),
+                    map(0x65, V1_20_5, V1_21),
+                    map(0x6C, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundTitleSetSubTitle::new,
+                    map(0x57, V1_17, V1_17_1),
+                    map(0x58, V1_18, V1_19),
+                    map(0x5B, V1_19_1, V1_19_1),
+                    map(0x59, V1_19_3, V1_19_3),
+                    map(0x5D, V1_19_4, V1_20),
+                    map(0x5F, V1_20_2, V1_20_2),
+                    map(0x61, V1_20_3, V1_20_3),
+                    map(0x63, V1_20_5, V1_21),
+                    map(0x6A, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundTitleTimes::new,
+                    map(0x5A, V1_17, V1_17_1),
+                    map(0x5B, V1_18, V1_19),
+                    map(0x5E, V1_19_1, V1_19_1),
+                    map(0x5C, V1_19_3, V1_19_3),
+                    map(0x60, V1_19_4, V1_20),
+                    map(0x62, V1_20_2, V1_20_2),
+                    map(0x64, V1_20_3, V1_20_3),
+                    map(0x66, V1_20_5, V1_21),
+                    map(0x6D, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundPlayerListHeader::new,
+                    map(0x47, V1_8, V1_8),
+                    map(0x48, V1_9, V1_9_2),
+                    map(0x47, V1_9_4, V1_11_1),
+                    map(0x49, V1_12, V1_12),
+                    map(0x4A, V1_12_1, V1_12_2),
+                    map(0x4E, V1_13, V1_13_2),
+                    map(0x53, V1_14, V1_14_4),
+                    map(0x54, V1_15, V1_15_2),
+                    map(0x53, V1_16, V1_16_4),
+                    map(0x5E, V1_17, V1_17_1),
+                    map(0x5F, V1_18, V1_18_2),
+                    map(0x60, V1_19, V1_19),
+                    map(0x63, V1_19_1, V1_19_1),
+                    map(0x61, V1_19_3, V1_19_3),
+                    map(0x65, V1_19_4, V1_20),
+                    map(0x68, V1_20_2, V1_20_2),
+                    map(0x6A, V1_20_3, V1_20_3),
+                    map(0x6D, V1_20_5, V1_21),
+                    map(0x74, V1_21_2, V1_21_4)
+            );
             clientBound.register(ClientboundSpawnPosition::new,
                     map(0x4C, V1_19_3, V1_19_3),
                     map(0x50, V1_19_4, V1_20),
@@ -264,6 +327,27 @@ public enum State {
                     map(0x0A, V1_19, V1_19_3),
                     map(0x0B, V1_19_4, V1_20),
                     map(0x0A, V1_20_2, V1_21_4)
+            );
+            clientBound.register(ClientboundUpdatePlayerInfo::new,
+                    map(0x38, V1_7_2, V1_8),
+                    map(0x2D, V1_9, V1_12),
+                    map(0x2E, V1_12_1, V1_12_2),
+                    map(0x30, V1_13, V1_13_2),
+                    map(0x33, V1_14, V1_14_4),
+                    map(0x34, V1_15, V1_15_2),
+                    map(0x33, V1_16, V1_16_1),
+                    map(0x32, V1_16_2, V1_16_4),
+                    map(0x36, V1_17, V1_18_2),
+                    map(0x34, V1_19, V1_19),
+                    map(0x37, V1_19_1, V1_19_1),
+                    map(0x36, V1_19_3, V1_19_3),
+                    map(0x3A, V1_19_4, V1_20),
+                    map(0x3C, V1_20_2, V1_20_3),
+                    map(0x3E, V1_20_5, V1_21),
+                    map(0x40, V1_21_2, V1_21_4)
+            );
+            clientBound.register(ClientboundRemovePlayerInfo::new,
+                    map(0x3F, V1_21_2, V1_21_4)
             );
             serverBound.register(ServerboundChatCommand::new,
                     map(0x05, V1_21_2, V1_21_4)

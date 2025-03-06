@@ -15,10 +15,13 @@ import me.rochblondiaux.ultralimbo.Limbo;
 import me.rochblondiaux.ultralimbo.network.connection.ClientConnection;
 import me.rochblondiaux.ultralimbo.network.connection.PacketSnapshots;
 import me.rochblondiaux.ultralimbo.network.protocol.PacketSnapshot;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.ClientboundDisconnect;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundPlayerPositionAndLook;
 import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundSpawnPosition;
+import me.rochblondiaux.ultralimbo.network.protocol.packets.play.client.ClientboundUpdatePlayerInfo;
 import me.rochblondiaux.ultralimbo.network.protocol.registry.State;
 import me.rochblondiaux.ultralimbo.network.protocol.registry.Version;
+import net.kyori.adventure.text.Component;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -68,6 +71,14 @@ public class PlayerManager {
                     connection.sendPacket(packetsEmptyChunk);
                 }
             }
+
+            connection.sendPacket(new ClientboundUpdatePlayerInfo(ClientboundUpdatePlayerInfo.Action.ADD_PLAYER, new PlayerInfo(
+                    new UserProfile(player.uniqueId(), player.name()),
+                    true,
+                    0,
+                    player.gameMode(),
+                    Component.text(player.name())
+            )));
         };
 
         if (connection.clientVersion().lessOrEqual(Version.V1_7_6)) {
@@ -81,6 +92,10 @@ public class PlayerManager {
         Player player = this.players.remove(uniqueId);
         if (player != null)
             log.info("Player {} ({}) has left the server", player.name(), player.uniqueId());
+    }
+
+    public void kick(Component reason) {
+        this.players.values().forEach(player -> player.connection().sendPacketAndClose(new ClientboundDisconnect(reason)));
     }
 
     public Optional<Player> findByUniqueId(UUID uniqueId) {

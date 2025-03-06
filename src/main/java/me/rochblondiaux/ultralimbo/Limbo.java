@@ -128,6 +128,9 @@ public class Limbo {
         this.logger.info("Stopping UltraLimbo...");
         long start = System.currentTimeMillis();
 
+        // Players
+        this.playerManager.kick(configuration.component("server-stop-kick"));
+
         // Server
         this.server.stop();
 
