@@ -9,7 +9,7 @@ motd:
   description: '<red>Ultra<yellow>Limbo'
   protocol: -1
 
-dimension: THE_END
+dimension: overworld
 
 advanced:
   brand-name: "UltraLimbo"

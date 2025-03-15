@@ -24,6 +24,7 @@ import me.rochblondiaux.ultralimbo.network.connection.PacketSnapshots;
 import me.rochblondiaux.ultralimbo.player.PlayerManager;
 import me.rochblondiaux.ultralimbo.registry.Registries;
 import me.rochblondiaux.ultralimbo.world.DimensionRegistry;
+import me.rochblondiaux.ultralimbo.world.WorldManager;
 
 @Getter
 public class Limbo {
@@ -42,9 +43,11 @@ public class Limbo {
     private DimensionRegistry dimensionRegistry;
 
     // Managers
+    private WorldManager worldManager;
     private PlayerManager playerManager;
     private ConnectionManager connections;
     private NetworkManager networkManager;
+
 
     // Server
     private LimboServer server;
@@ -92,6 +95,8 @@ public class Limbo {
         }
 
         // Connections
+        this.worldManager = new WorldManager(this);
+        this.worldManager.load();
         this.playerManager = new PlayerManager(this);
         this.connections = new ConnectionManager(this);
         this.networkManager = new NetworkManager(this);

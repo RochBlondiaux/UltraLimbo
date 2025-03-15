@@ -24,6 +24,15 @@
         <netty.version>4.1.119.Final</netty.version>
     </properties>
 
+    <!-- repositories -->
+    <repositories>
+        <!-- jitpack -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <!-- dependencies -->
     <dependencies>
         <!-- lombok -->
@@ -116,6 +125,12 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>${netty.version}</version>
+        </dependency>
+        <!-- nbt -->
+        <dependency>
+            <groupId>com.github.Querz</groupId>
+            <artifactId>NBT</artifactId>
+            <version>6.1</version>
         </dependency>
     </dependencies>
 
